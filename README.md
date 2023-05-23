@@ -11,8 +11,8 @@ Python descompresor.py comprimido.elmejorprofesor
 
 Python verificador.py archivo.txt descomprimido-elmejorprofesor.txt
 
-mpiexec -n 4 python compresorp.py archivo.txt
+mpiexec -n <numero de procesos> python compresorp.py archivo.txt
 
-mpiexec -n 4 python descompresorp.py comprimidop.elmejorprofesor.npy descomprimidop-elmejorprofesor.txt
+mpiexec -n <numero de procesos> python descompresorp.py comprimidop.elmejorprofesor.npy descomprimidop-elmejorprofesor.txt
 
 Python verificador.py descomprimido-elmejorprofesor.txt descomprimidop-elmejorprofesor.txt
