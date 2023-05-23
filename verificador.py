@@ -16,10 +16,9 @@ def verify(file1_path, file2_path):
     else:
         result = "nok"
 
-    # Reunir los resultados de todos los procesos en el proceso 0
     all_results = comm.gather(result, root=0)
 
-    # Imprimir el resultado solo en el proceso 0
+
     if rank == 0:
         if all_results.count("nok") > 0:
             print("nok")

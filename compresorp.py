@@ -7,7 +7,6 @@ def compress(input_file_path, compressed_file_path):
     rank = comm.Get_rank()
     size = comm.Get_size()
 
-    # El proceso con rango 0 lee el archivo de entrada
     if rank == 0:
         with open(input_file_path, 'r', encoding='utf-8') as file:
             data = file.read().encode('utf-8')
@@ -16,28 +15,26 @@ def compress(input_file_path, compressed_file_path):
         data = None
         data_size = None
 
-    # Compartir el tamaño de los datos entre los procesos
     data_size = comm.bcast(data_size, root=0)
 
-    # Dividir el trabajo entre los procesos
     chunk_size = data_size // size
     remainder = data_size % size
 
-    # Calcular los desplazamientos y los tamaños de los fragmentos de datos para cada proceso
+   
     sizes = [chunk_size if i < size - 1 else chunk_size + remainder for i in range(size)]
     displacements = [sum(sizes[:i]) for i in range(size)]
 
-    # Dividir los datos y distribuirlos entre los procesos
+  
     data_chunk = np.empty(sizes[rank], dtype=np.uint8)
     comm.Scatterv([data, sizes, displacements, MPI.BYTE], data_chunk, root=0)
 
-    # Convertir los datos en una matriz de bytes
+   
     compressed_data = np.array([char.item() for char in data_chunk], dtype=np.uint8)
 
-    # Recopilar los fragmentos de datos comprimidos en el proceso con rango 0
+   
     gathered_data = comm.gather(compressed_data, root=0)
 
-    # El proceso con rango 0 guarda los datos comprimidos en el archivo de salida
+   
     if rank == 0:
         flattened_data = np.concatenate(gathered_data)
         np.save(compressed_file_path, flattened_data)
